@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { ValidationPipe } from '@nestjs/common'
 //import * as bcrypt from 'bcrypt';
 
 //no tomar en cuenta era para generar el hash de la contraseña
@@ -17,6 +18,9 @@ async function bootstrap() {
   app.enableCors({
     origin: 'http://localhost:5173',
   });
+
+  // Habilitar validaciones globales
+  app.useGlobalPipes(new ValidationPipe());
 
   // Establecer prefijo global para las rutas
   app.setGlobalPrefix('api');
