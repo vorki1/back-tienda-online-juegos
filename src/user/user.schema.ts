@@ -12,12 +12,8 @@ export class User extends Document {
   @Prop({ required: true })
   contrasenia: string;
 
-  @Prop({ default: [] })
-  compras: {
-    productoId: string;
-    cantidad: number;
-    fecha: Date;
-  }[];
+  @Prop({ required: true, default: 'usuario' })
+  rol: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

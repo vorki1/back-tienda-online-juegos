@@ -6,14 +6,13 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // Extrae el token del encabezado Authorization
-      ignoreExpiration: false, // Rechaza tokens expirados
-      secretOrKey: process.env.JWT_SECRET || 'supersecret', // Usa una clave secreta desde variables de entorno
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ignoreExpiration: false,
+      secretOrKey: process.env.JWT_SECRET || 'supersecret',
     });
   }
 
-  validate(payload: { id: number; email: string; rol: string }) {
-    // Devuelve los datos del usuario que estarán disponibles en el contexto de la solicitud
+  validate(payload: { id: string; email: string; rol: string }) { // <-- id como string
     return {
       userId: payload.id,
       email: payload.email,

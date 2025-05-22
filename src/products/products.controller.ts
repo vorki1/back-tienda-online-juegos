@@ -16,10 +16,10 @@ export class ProductsController {
 
 
 
-   @Get(':id')
-  @Roles('admin', 'user') // Permite acceso a usuarios con rol "admin" o "user"
-  findOne(@Param('id') id: string) {
-    const product = this.productsService.findOne(Number(id));
+  @Get(':id')
+  @Roles('admin', 'user')
+  async findOne(@Param('id') id: string) {
+    const product = await this.productsService.findOne(id);
     if (!product) {
       throw new NotFoundException('Producto no encontrado');
     }
