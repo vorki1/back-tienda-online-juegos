@@ -22,11 +22,9 @@ async function bootstrap() {
   // Habilitar validaciones globales
   app.useGlobalPipes(new ValidationPipe());
 
-  // Establecer prefijo global para las rutas
-  app.setGlobalPrefix('api');
 
   // Escuchar en el puerto definido en el entorno o en el puerto 3001
-  await app.listen(process.env.PORT ?? 3001);
+  await app.listen(process.env.PORT ?? 3000);
 }
 
 bootstrap();

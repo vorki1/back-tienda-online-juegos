@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
-import { PurchasesService } from '../purchases/purchases.service'; // <-- Cambia aquí
+import { PurchasesService } from '../purchases/purchases.service'; 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
@@ -8,15 +8,15 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
-@UseGuards(JwtAuthGuard, RolesGuard)
+//@UseGuards(JwtAuthGuard, RolesGuard)
 export class UserController {
   constructor(
     private readonly userService: UserService,
-    private readonly purchasesService: PurchasesService, // <-- Cambia aquí
+    private readonly purchasesService: PurchasesService,
   ) {}
 
   @Post()
-  @Roles('admin')
+  //@Roles('admin')
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
