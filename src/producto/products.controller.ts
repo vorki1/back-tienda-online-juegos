@@ -1,4 +1,4 @@
-import { Controller, Get, Param, NotFoundException, UseGuards } from '@nestjs/common';
+/*import { Controller, Get, Param, NotFoundException, UseGuards } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
@@ -25,4 +25,4 @@ export class ProductsController {
     }
     return product;
   }
-}
+}*/

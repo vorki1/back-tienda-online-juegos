@@ -1,5 +1,5 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ProductsService } from '../products/products.service';
+/*import { Controller, Get, UseGuards } from '@nestjs/common';
+import { ProductsService } from '../products/products.service'; // Importa el servicio de productos
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
@@ -32,4 +32,4 @@ export class AdminController {
   getProductSales() {
     return this.productsService.getProductSales();
   }
-}
+}*/
