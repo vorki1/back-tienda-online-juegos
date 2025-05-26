@@ -2,46 +2,31 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { hashPassword, comparePasswords } from '../utils/hash';
 import { LoginDto } from './dto/login.dto';
-
-interface User {
-  id: number;
-  nombre: string;
-  email: string;
-  contrasenia: string;
-  rol: 'admin' | 'usuario';
-}
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { User } from '../user/user.schema';
 
 @Injectable()
 export class AuthService {
-  private users: User[] = [
-    {
-      id: 1,
-      nombre: 'Admin',
-      email: 'admin@example.com',
-      contrasenia: '$2b$10$0dzDb.XjYpL1tz/W7s1qO.ZtkvfYvJ0hFSP.qz2RgHcsbYph9mik6', // Contraseña: admin123 (hash de ejemplo)
-      rol: 'admin',
-    },
-  ];
-
-  private nextId = 2;
-
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    @InjectModel(User.name) private userModel: Model<User>,
+  ) {}
 
   async login(dto: LoginDto) {
-    // Buscar usuario por email
-    let user = this.users.find((u) => u.email === dto.email);
+    // Buscar usuario por email en la base de datos
+    let user = await this.userModel.findOne({ email: dto.email }).exec();
 
     if (!user) {
       // Si el email no está registrado, crear un nuevo usuario
       const hashedPassword = await hashPassword(dto.password);
-      user = {
-        id: this.nextId++,
+      user = new this.userModel({
         nombre: 'Usuario',
         email: dto.email,
         contrasenia: hashedPassword,
         rol: 'usuario', // Por defecto, el rol es "usuario"
-      };
-      this.users.push(user);
+      });
+      await user.save();
     } else {
       // Si el usuario existe, validar la contraseña
       if (!(await comparePasswords(dto.password, user.contrasenia))) {
@@ -51,7 +36,7 @@ export class AuthService {
 
     // Generar token JWT
     const token = this.jwtService.sign({
-      id: user.id,
+      id: user._id,
       email: user.email,
       rol: user.rol,
     });
@@ -59,7 +44,7 @@ export class AuthService {
     return {
       token,
       user: {
-        id: user.id,
+        id: user._id,
         nombre: user.nombre,
         email: user.email,
         rol: user.rol,
@@ -67,5 +52,3 @@ export class AuthService {
     };
   }
 }
-
-  

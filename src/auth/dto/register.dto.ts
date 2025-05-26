@@ -1,5 +1,10 @@
 import { IsEmail, IsString, IsEnum } from 'class-validator';
 
+export enum Rol {
+  ADMIN = 'admin',
+  USUARIO = 'usuario',
+}
+
 export class RegisterDto {
   @IsString()
   nombre!: string;
@@ -10,6 +15,6 @@ export class RegisterDto {
   @IsString()
   password!: string;
 
-  @IsEnum(['admin', 'usuario'], { message: 'Rol no válido. Debe ser "admin" o "usuario".' })
-  rol!: 'admin' | 'usuario';
+  @IsEnum(Rol, { message: 'Rol no válido. Debe ser "admin" o "usuario".' })
+  rol!: Rol;
 }
