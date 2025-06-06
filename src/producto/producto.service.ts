@@ -6,6 +6,7 @@ import {Producto } from './producto.schema';
 import { Model } from 'mongoose';
 import * as XLSX from 'xlsx';
 import { ImagekitService } from '../imagekit/imagekit.service';
+import { CompraProductoDto } from './dto/compra-producto.dto';
 
 @Injectable()
 export class ProductoService {
@@ -30,36 +31,59 @@ export class ProductoService {
     const filaDatos = datos.slice(1); // Ignorar la primera fila (cabecera)
     for (const fila of filaDatos) {
       const nombre = fila[0];
-      const categoria = fila[1];
-      const precio = fila[2];
-      const imageBase64 = fila[3];
-      console.log(`Nombre: ${nombre}, Categoría: ${categoria}, Precio: ${precio}, ImageUrl`);
-      // Aqui comprobamos si la imagen ya existe
-      const existe = await this.imagekitService.existsFile(`${nombre}.jpg`);
-      if (existe) {
-        console.log('El archivo ya existe, no se puede subir');
-        // Aquí podrías manejar el caso en que el archivo ya existe, por ejemplo, actualizar el producto o ignorar
-      } else {
-        const imageUrl = await this.imagekitService.uploadFromBase64(imageBase64,`${nombre}.jpg`);
+      if (!nombre) {
+        console.warn('Nombre del producto vacío, saltando fila');
+        continue; // Saltar filas sin nombre
       }
-    }
-    console.log(await this.imagekitService.listarNombresDeArchivos())
+      const categorias = fila[1].split(',').map(cat => cat.trim()); // Asumiendo que las categorías están separadas por comas
+      const precio = fila[2];
+      const stock = fila[3];
+      const imageBase64 = fila[4];
+      console.log(`Nombre: ${nombre}, Categoría: ${categorias}, Precio: ${precio}, Stock: ${stock}, ImageUrl`);
 
-    // Aquí se guardara los datos en la base de datos o realizar otras operaciones necesarias-------------------------------
+      const existProducto = await this.findOneByNombre(nombre);
+      const imageUrl = await this.imagekitService.uploadFromBase64(imageBase64,`${nombre}.jpg`);
+      if (existProducto) {
+        console.log(`El producto ${nombre} ya existe, actualizando...`);
+        // Aquí podrías actualizar el producto si ya existe
+        await this.productoModel.updateOne(
+          { nombre },
+          { categorias, precio,stock, imageUrl },
+        );
+      } else {
+        console.log(`Creando nuevo producto: ${nombre}`);
+        
+        const nuevoProducto = new this.productoModel({
+          nombre,
+          categorias,
+          precio,
+          stock, // Asignar un valor por defecto o manejarlo según tu lógica
+          imageUrl,
+        });
+        await nuevoProducto.save();
+      }
+    }   
     return 'Archivo Excel importado correctamente';
   }
   
 
   findAll() {
-    return `This action returns all producto`;
+    return this.productoModel.find().exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} producto`;
+  findOneByNombre(nombre: string) {
+    return this.productoModel.findOne({ nombre }).exec();
   }
 
-  update(id: number, updateProductoDto: UpdateProductoDto) {
-    return `This action updates a #${id} producto`;
+  comprarProducto(compraProductoDto: CompraProductoDto) {
+    //El comentario de abajo te muestra el nombre del producto y el stock a reducir
+    //console.log(`Comprando producto: ${compraProductoDto.nombre}, Stock a reducir: ${compraProductoDto.stock}`);
+    const nombreProducto = compraProductoDto.nombre;
+    return this.productoModel.findOneAndUpdate(
+      { nombre: nombreProducto },
+      { $inc: { stock: -compraProductoDto.stock } },
+      { new: true },
+    ).exec();
   }
 
   remove(id: number) {

@@ -16,7 +16,7 @@ export class Producto extends Document {
   stock: number;
 
   @Prop()
-  urlImagen: string;
+  imageUrl: string;
 
   @Prop()
   valoracionId: number;
