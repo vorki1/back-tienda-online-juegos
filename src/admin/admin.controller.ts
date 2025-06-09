@@ -1,35 +1,35 @@
-/*import { Controller, Get, UseGuards } from '@nestjs/common';
-import { ProductsService } from '../products/products.service'; // Importa el servicio de productos
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { AdminService } from './admin.service';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/roles.guard';
 import { Roles } from '../auth/roles.decorator';
 
 @Controller('admin')
-@UseGuards(JwtAuthGuard, RolesGuard) // Aplica los guards de JWT y roles a todas las rutas del controlador
+//@UseGuards(JwtAuthGuard, RolesGuard)
 export class AdminController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly adminService: AdminService) {}
 
   @Get('top-selling-products')
-  @Roles('admin') // Solo los usuarios con el rol "admin" pueden acceder
+  //@Roles('admin')
   getTopSellingProducts() {
-    return this.productsService.getTopSellingProducts();
+    return this.adminService.getTopSellingProducts();
   }
 
   @Get('top-categories')
-  @Roles('admin') // Solo los usuarios con el rol "admin" pueden acceder
+  //@Roles('admin')
   getTopCategories() {
-    return this.productsService.getTopCategories();
+    return this.adminService.getTopCategories();
   }
 
   @Get('top-rated-products')
-  @Roles('admin') // Solo los usuarios con el rol "admin" pueden acceder
+  //@Roles('admin')
   getTopRatedProducts() {
-    return this.productsService.getTopRatedProducts();
+    return this.adminService.getTopRatedProducts();
   }
 
   @Get('product-sales')
-  @Roles('admin') // Solo los usuarios con el rol "admin" pueden acceder
+  //@Roles('admin')
   getProductSales() {
-    return this.productsService.getProductSales();
+    return this.adminService.getProductSales();
   }
-}*/
+}

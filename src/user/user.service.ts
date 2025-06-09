@@ -4,13 +4,13 @@ import { Model } from 'mongoose';
 import { User } from './user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { PurchasesService } from '../purchases/purchases.service';
+import { CompraService } from '../compra/compra.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private userModel: Model<User>,
-    private readonly purchasesService: PurchasesService,
+    private readonly compraService: CompraService,
   ) {}
 
   async create(createUserDto: CreateUserDto) {
@@ -41,6 +41,6 @@ export class UserService {
   }
 
   async getUserPurchases(userId: string) {
-    return this.purchasesService.getUserPurchases(userId);
+    return this.compraService.historialCompras(userId); // Cambiado el método
   }
 }

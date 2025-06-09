@@ -89,4 +89,14 @@ export class ProductoService {
   remove(id: number) {
     return `This action removes a #${id} producto`;
   }
+
+    async getValoracionesYComentarios(productId: string) {
+    const producto = await this.productoModel.findById(productId).exec();
+    if (!producto) throw new Error('Producto no encontrado');
+    return {
+      promedioValoracion: producto.promedioValoracion,
+      cantidadValoraciones: producto.cantidadValoraciones,
+      comentarios: producto.comentarios,
+    };
+  }
 }

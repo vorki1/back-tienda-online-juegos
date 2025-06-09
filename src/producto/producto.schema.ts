@@ -18,11 +18,17 @@ export class Producto extends Document {
   @Prop()
   imageUrl: string;
 
-  @Prop()
-  valoracionId: number;
-
   @Prop({ default: 0 })
   cantidadVentas: number;
+
+  @Prop({ default: 0 })
+  promedioValoracion: number;
+
+  @Prop({ default: 0 })
+  cantidadValoraciones: number;
+
+  @Prop({ type: [String], default: [] })
+  comentarios: string[]; // solo los últimos N comentarios
 }
 
 export const ProductoSchema = SchemaFactory.createForClass(Producto);

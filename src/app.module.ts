@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-//import { ProductsModule } from './products/products.module';
-//import { AdminModule } from './admin/admin.module';
+import { CompraModule } from './compra/compra.module';
+import { AdminModule } from './admin/admin.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { ProductoModule } from './producto/producto.module';
@@ -15,8 +15,8 @@ import { ProductoModule } from './producto/producto.module';
       
     ),
     AuthModule,
-    //ProductsModule,
-    //AdminModule,
+    CompraModule,
+    AdminModule,
     UserModule,
     ProductoModule,
   ],

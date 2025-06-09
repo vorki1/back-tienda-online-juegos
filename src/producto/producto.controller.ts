@@ -43,4 +43,9 @@ export class ProductoController {
   remove(@Param('id') id: string) {
     return this.productoService.remove(+id);
   }
+  
+  @Get(':id/valoraciones')
+  async getValoracionesYComentarios(@Param('id') id: string) {
+    return this.productoService.getValoracionesYComentarios(id);
+  }
 }
