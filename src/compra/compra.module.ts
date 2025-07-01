@@ -6,6 +6,7 @@ import { CompraController } from './compra.controller';
 import { Producto, ProductoSchema } from '../producto/producto.schema';
 import { ProductoService } from '../producto/producto.service';
 import { ImagekitModule } from '../imagekit/imagekit.module';
+import { CarroModule } from 'src/carro/carro.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ImagekitModule } from '../imagekit/imagekit.module';
       { name: Producto.name, schema: ProductoSchema },
     ]),
     ImagekitModule,
+    CarroModule,
   ],
   controllers: [CompraController],
   providers: [CompraService, ProductoService],

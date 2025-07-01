@@ -5,6 +5,7 @@ import { Compra } from './compra.schema';
 import { CreateCompraDto } from './dto/create-compra.dto';
 import { Producto } from '../producto/producto.schema';
 import { ProductoService } from '../producto/producto.service';
+import { CarroService } from 'src/carro/carro.service';
 
 @Injectable()
 export class CompraService {
@@ -12,6 +13,7 @@ export class CompraService {
     @InjectModel(Compra.name) private compraModel: Model<Compra>,
     private readonly productoService: ProductoService,
     @InjectModel(Producto.name) private productoModel: Model<Producto>,
+    private readonly carroService: CarroService,
   ) {}
 
   async crearCompra(createCompraDto: CreateCompraDto) {
@@ -40,6 +42,8 @@ export class CompraService {
       }
 
       await producto.save();
+      //Nueva linea para resetear el carro de compras
+      await this.carroService.resetearCarro(createCompraDto.userId)
     }
 
     // Crear la compra

@@ -7,5 +7,6 @@ import { RedisModule } from 'src/redis/redis.module';
   imports: [RedisModule],
   controllers: [CarroController],
   providers: [CarroService],
+  exports: [CarroService],
 })
 export class CarroModule {}
