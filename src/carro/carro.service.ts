@@ -12,7 +12,7 @@ export class CarroService {
     return await this.redis.get(`carro:${usuarioId}`);
   }
 
-  
+  //Si el carrito expira y el usuario vuelve a conectarse, se pregunta por el carro en localstorage
   async agregarProducto(usuarioId: string, datos: AgregarCarroDto) {
     const clave = `carro:${usuarioId}`;
     const carrito = await this.redis.get(clave);

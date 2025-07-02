@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Res } from '@nestjs/common';
 import { ProductoService } from './producto.service';
 import { CreateProductoDto } from './dto/create-producto.dto';
 import { UpdateProductoDto } from './dto/update-producto.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CompraProductoDto } from './dto/compra-producto.dto';
+import { Response } from 'express';
 
 @Controller('producto')
 export class ProductoController {
@@ -21,6 +22,21 @@ export class ProductoController {
   importarExcel(@UploadedFile() file: Express.Multer.File) {
     return this.productoService.importarExcel(file);
   }
+  // Exportar productos a Excel
+  @Get('excel/exportar')
+  async exportarExcel(@Res() res: Response) {
+    const buffer = await this.productoService.exportarExcel();
+
+    res.set({
+      'Content-Type':
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      'Content-Disposition': 'attachment; filename=productos.xlsx',
+      'Content-Length': buffer.length,
+    });
+
+    res.send(buffer);
+  }
+
   //Para obtener todos los productos
   @Get()
   findAll() {

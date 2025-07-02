@@ -22,6 +22,42 @@ export class ProductoService {
     const productoCreado = new this.productoModel(createProductoDto);
     return productoCreado.save();
   }
+  
+
+  findAll() {
+    return this.productoModel.find().exec();
+  }
+
+  findOneByNombre(nombre: string) {
+    return this.productoModel.findOne({ nombre }).exec();
+  }
+
+  comprarProducto(compraProductoDto: CompraProductoDto) {
+    //El comentario de abajo te muestra el nombre del producto y el stock a reducir
+    //console.log(`Comprando producto: ${compraProductoDto.nombre}, Stock a reducir: ${compraProductoDto.stock}`);
+    const nombreProducto = compraProductoDto.nombre;
+    return this.productoModel.findOneAndUpdate(
+      { nombre: nombreProducto },
+      { $inc: { stock: -compraProductoDto.stock } },
+      { new: true },
+    ).exec();
+  }
+
+  remove(id: number) {
+    return `This action removes a #${id} producto`;
+  }
+
+    async getValoracionesYComentarios(productId: string) {
+    const producto = await this.productoModel.findById(productId).exec();
+    if (!producto) throw new Error('Producto no encontrado');
+    return {
+      promedioValoracion: producto.promedioValoracion,
+      cantidadValoraciones: producto.cantidadValoraciones,
+      comentarios: producto.comentarios,
+    };
+  }
+
+  //Palta debera pescar la imagen del excel, subirlo a imagekit y mandar la url de la nube y todo el excel al backend
   async importarExcel(file: Express.Multer.File) {
     console.log('Importando archivo Excel...');
     // Aquí puedes implementar la lógica para importar el archivo Excel
@@ -66,37 +102,30 @@ export class ProductoService {
     return 'Archivo Excel importado correctamente';
   }
   
+  async exportarExcel() {
+    const productos = await this.productoModel.find().lean().exec();
 
-  findAll() {
-    return this.productoModel.find().exec();
-  }
+    // Construimos un array de arrays con la cabecera y los datos
+    const datosExcel = [
+      ['Nombre', 'Categorias', 'Precio', 'Stock', 'ImagenUrl'], // encabezado
+      ...productos.map(prod => [
+        prod.nombre,
+        prod.categorias.join(', '),
+        prod.precio,
+        prod.stock,
+        prod.imageUrl || '',
+      ]),
+    ];
 
-  findOneByNombre(nombre: string) {
-    return this.productoModel.findOne({ nombre }).exec();
-  }
+    // Creamos un workbook y una hoja
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(datosExcel);
 
-  comprarProducto(compraProductoDto: CompraProductoDto) {
-    //El comentario de abajo te muestra el nombre del producto y el stock a reducir
-    //console.log(`Comprando producto: ${compraProductoDto.nombre}, Stock a reducir: ${compraProductoDto.stock}`);
-    const nombreProducto = compraProductoDto.nombre;
-    return this.productoModel.findOneAndUpdate(
-      { nombre: nombreProducto },
-      { $inc: { stock: -compraProductoDto.stock } },
-      { new: true },
-    ).exec();
-  }
+    XLSX.utils.book_append_sheet(wb, ws, 'Productos');
 
-  remove(id: number) {
-    return `This action removes a #${id} producto`;
-  }
+    // Generamos el archivo Excel como buffer
+    const excelBuffer = XLSX.write(wb, { type: 'buffer', bookType: 'xlsx' });
 
-    async getValoracionesYComentarios(productId: string) {
-    const producto = await this.productoModel.findById(productId).exec();
-    if (!producto) throw new Error('Producto no encontrado');
-    return {
-      promedioValoracion: producto.promedioValoracion,
-      cantidadValoraciones: producto.cantidadValoraciones,
-      comentarios: producto.comentarios,
-    };
+    return excelBuffer;
   }
 }
