@@ -17,43 +17,45 @@ export class CompraService {
   ) {}
 
   async crearCompra(createCompraDto: CreateCompraDto) {
-    for (const item of createCompraDto.productos) {
-      const producto = await this.productoModel.findById(item.productId);
-      if (!producto) throw new NotFoundException('Producto no encontrado');
-      if (producto.stock < item.cantidad) throw new BadRequestException('Stock insuficiente');
+  for (const item of createCompraDto.productos) {
+    const producto = await this.productoModel.findById(item.productId);
+    if (!producto) throw new NotFoundException('Producto no encontrado');
+    if (producto.stock < item.cantidad) throw new BadRequestException('Stock insuficiente');
 
-      // Actualiza stock y ventas
-      producto.stock -= item.cantidad;
-      producto.cantidadVentas += item.cantidad;
+    // Actualiza stock y ventas
+    producto.stock -= item.cantidad;
+    producto.cantidadVentas += item.cantidad;
 
-      // Actualiza valoraciones y comentarios
+    // Actualiza valoraciones solo si viene el campo
+    if (typeof item.valoracion === "number") {
       const totalValoraciones = producto.cantidadValoraciones + 1;
       producto.promedioValoracion = (
         (producto.promedioValoracion * producto.cantidadValoraciones + item.valoracion) / totalValoraciones
       );
       producto.cantidadValoraciones = totalValoraciones;
-
-      // Guarda solo los últimos 10 comentarios
-      if (item.comentario) {
-        producto.comentarios.unshift(item.comentario);
-        if (producto.comentarios.length > 10) {
-          producto.comentarios = producto.comentarios.slice(0, 10);
-        }
-      }
-
-      await producto.save();
-      //Nueva linea para resetear el carro de compras
-      await this.carroService.resetearCarro(createCompraDto.userId)
     }
 
-    // Crear la compra
-    const compra = new this.compraModel({
-      userId: createCompraDto.userId || null,
-      productos: createCompraDto.productos,
-      fecha: new Date(),
-    });
-    return compra.save();
+    // Guarda solo los últimos 10 comentarios si viene el campo
+    if (item.comentario) {
+      producto.comentarios.unshift(item.comentario);
+      if (producto.comentarios.length > 10) {
+        producto.comentarios = producto.comentarios.slice(0, 10);
+      }
+    }
+
+    await producto.save();
+    // Nueva línea para resetear el carro de compras
+    await this.carroService.resetearCarro(createCompraDto.userId)
   }
+
+  // Crear la compra
+  const compra = new this.compraModel({
+    userId: createCompraDto.userId || null,
+    productos: createCompraDto.productos,
+    fecha: new Date(),
+  });
+  return compra.save();
+}
 
   async historialCompras(userId: string) {
     return this.compraModel

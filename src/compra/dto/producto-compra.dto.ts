@@ -9,6 +9,7 @@ export class CompraProductoDto {
   @Min(1)
   cantidad: number;
 
+  @IsOptional()
   @IsNumber()
   @Min(1)
   @Max(5)

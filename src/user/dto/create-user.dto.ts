@@ -13,4 +13,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(6)
   contrasenia: string;
+
+  @IsString()
+  rol: string; // Por defecto 'usuario', pero puede ser 'admin' si se desea
 }

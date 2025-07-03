@@ -9,12 +9,6 @@ import { Response } from 'express';
 @Controller('producto')
 export class ProductoController {
   constructor(private readonly productoService: ProductoService) {}
-  //Metodo para crear un producto manualmente
-  /* @Post()
-  create(@Body() createProductoDto: CreateProductoDto) {
-    return this.productoService.create(createProductoDto);
-  } */
-
 
   //Metodo para importar productos desde un archivo Excel
   @Post('excel')
@@ -22,6 +16,7 @@ export class ProductoController {
   importarExcel(@UploadedFile() file: Express.Multer.File) {
     return this.productoService.importarExcel(file);
   }
+
   // Exportar productos a Excel
   @Get('excel/exportar')
   async exportarExcel(@Res() res: Response) {
@@ -43,6 +38,12 @@ export class ProductoController {
     return this.productoService.findAll();
   }
 
+  //Para buscar un producto por ID
+  @Get('id/:id')
+  findOneById(@Param('id') id: string) {
+    return this.productoService.findOneById(id);
+  }
+
   //Para buscar un producto por nombre
   @Get(':nombre')
   findOneByNombre(@Param('nombre') nombre: string) {
@@ -51,7 +52,6 @@ export class ProductoController {
 
   @Patch()
   comprarProducto(@Body() compraProductoDto: CompraProductoDto) {
-    
     return this.productoService.comprarProducto(compraProductoDto);
   }
 
@@ -63,5 +63,18 @@ export class ProductoController {
   @Get(':id/valoraciones')
   async getValoracionesYComentarios(@Param('id') id: string) {
     return this.productoService.getValoracionesYComentarios(id);
+  }
+
+  @Patch(':id/comentario')
+  async agregarComentario(
+    @Param('id') id: string,
+    @Body() body: { comentario: string; valoracion?: number }
+  ) {
+    return this.productoService.agregarComentario(id, body.comentario, body.valoracion);
+  }
+
+  @Patch(':id/valoracion')
+  async valorarProducto(@Param('id') id: string, @Body('valoracion') valoracion: number) {
+    return this.productoService.valorarProducto(id, valoracion);
   }
 }
