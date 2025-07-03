@@ -14,7 +14,7 @@ export class CarroController {
   
   @Post(':usuarioId')
   async agregar(@Param('usuarioId') usuarioId: string, @Body() AgregarCarroDto: AgregarCarroDto) {
-    console.log(`POST /carro/${usuarioId}`, AgregarCarroDto) // <-- Aquí el log
+    //console.log(`POST /carro/${usuarioId}`, AgregarCarroDto) // <-- Aquí el log
     return await this.carroService.agregarProducto(usuarioId, AgregarCarroDto);
   }
   @Delete(':usuarioId')

@@ -4,7 +4,6 @@ import { CompraProductoDto } from './producto-compra.dto';
 
 export class CreateCompraDto {
   @IsOptional()
-  @IsMongoId()
   userId?: string;
 
   @IsArray()
