@@ -10,7 +10,7 @@ export class CarroController {
   @Get(':usuarioId')
   async obtener(@Param('usuarioId') usuarioId: string) {
     return await this.carroService.obtenerCarro(usuarioId);
-  }
+  } //no lo usa front
   
   @Post(':usuarioId')
   async agregar(@Param('usuarioId') usuarioId: string, @Body() AgregarCarroDto: AgregarCarroDto) {
